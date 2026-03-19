@@ -27,8 +27,8 @@ export const progressService = {
   getOverallPercent(totalLessons: number): number {
     const all = this.getAll();
     let completed = 0;
-    Object.values(all).forEach(mod => {
-      Object.values(mod).forEach(l => { if (l.completed) completed++; });
+    Object.values(all).forEach((mod: Record<string, LessonProgress>) => {
+      Object.values(mod).forEach((l: LessonProgress) => { if (l.completed) completed++; });
     });
     return totalLessons > 0 ? Math.round((completed / totalLessons) * 100) : 0;
   },
