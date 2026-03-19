@@ -10,6 +10,7 @@ import { CheckCircle, XCircle, Lightbulb, Eye, ArrowLeft, ArrowRight } from 'luc
 const LessonPage = () => {
   const { moduleId, lessonId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const module = courseModules.find(m => m.id === moduleId);
   const lessonIdx = module?.lessons.findIndex(l => l.id === lessonId) ?? -1;
   const lesson = module?.lessons[lessonIdx];
