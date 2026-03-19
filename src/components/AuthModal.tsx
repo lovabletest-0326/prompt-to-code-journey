@@ -11,23 +11,48 @@ const AuthModal = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (showAuth === 'login') {
-      const result = login(email, password);
-      if (!result.success) setError(result.error || 'Login failed');
-      else setShowAuth(null);
-    } else {
-      if (!name.trim()) { setError('Name is required'); return; }
-      const result = signup(name, email, password);
-      if (!result.success) setError(result.error || 'Signup failed');
-      else setShowAuth(null);
+    setLoading(true);
+    try {
+      if (showAuth === 'login') {
+        const result = await login(email, password);
+        if (!result.success) setError(result.error || 'Login failed');
+        else setShowAuth(null);
+      } else {
+        if (!name.trim()) { setError('Name is required'); setLoading(false); return; }
+        const result = await signup(name, email, password);
+        if (!result.success) setError(result.error || 'Signup failed');
+        else setSignupSuccess(true);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  const reset = () => { setName(''); setEmail(''); setPassword(''); setError(''); };
+  const reset = () => { setName(''); setEmail(''); setPassword(''); setError(''); setSignupSuccess(false); };
+
+  if (signupSuccess) {
+    return (
+      <Dialog open={!!showAuth} onOpenChange={(open) => { if (!open) { setShowAuth(null); reset(); } }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-heading">Check your email ✉️</DialogTitle>
+            <DialogDescription>
+              We've sent a confirmation link to <strong>{email}</strong>. Click the link to activate your account, then sign in.
+            </DialogDescription>
+          </DialogHeader>
+          <Button variant="outline" className="w-full" onClick={() => { setShowAuth('login'); reset(); }}>
+            Go to Sign In
+          </Button>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={!!showAuth} onOpenChange={(open) => { if (!open) { setShowAuth(null); reset(); } }}>
@@ -55,11 +80,11 @@ const AuthModal = () => {
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
+            <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required minLength={6} />
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button type="submit" className="w-full">
-            {showAuth === 'login' ? 'Sign In' : 'Create Account'}
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? 'Please wait…' : showAuth === 'login' ? 'Sign In' : 'Create Account'}
           </Button>
           <p className="text-center text-sm text-muted-foreground">
             {showAuth === 'login' ? (
