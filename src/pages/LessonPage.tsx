@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { courseModules } from '@/data/courseData';
 import { progressService } from '@/services/progressService';
 import { authService } from '@/services/authService';
+import { useAuth } from '@/components/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, XCircle, Lightbulb, Eye, ArrowLeft, ArrowRight } from 'lucide-react';
 
