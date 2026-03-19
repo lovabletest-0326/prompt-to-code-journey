@@ -35,7 +35,7 @@ export const progressService = {
 
   getModulePercent(moduleId: string, totalLessons: number): number {
     const mod = this.getModuleProgress(moduleId);
-    const completed = Object.values(mod).filter(l => l.completed).length;
+    const completed = Object.values(mod).filter((l: LessonProgress) => l.completed).length;
     return totalLessons > 0 ? Math.round((completed / totalLessons) * 100) : 0;
   },
 };
