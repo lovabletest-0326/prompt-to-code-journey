@@ -36,7 +36,7 @@ const LessonPage = () => {
   const handleNext = () => {
     if (allCorrect) {
       progressService.completeLesson(module.id, lesson.id);
-      authService.addXP(50);
+      if (user) authService.addXP(user.id, 50);
     }
     const nextIdx = lessonIdx + 1;
     if (nextIdx < module.lessons.length) {
