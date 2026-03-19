@@ -3,12 +3,14 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { courseModules } from '@/data/courseData';
 import { progressService } from '@/services/progressService';
 import { authService } from '@/services/authService';
+import { useAuth } from '@/components/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, XCircle, Lightbulb, Eye, ArrowLeft, ArrowRight } from 'lucide-react';
 
 const LessonPage = () => {
   const { moduleId, lessonId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const module = courseModules.find(m => m.id === moduleId);
   const lessonIdx = module?.lessons.findIndex(l => l.id === lessonId) ?? -1;
   const lesson = module?.lessons[lessonIdx];
@@ -34,7 +36,7 @@ const LessonPage = () => {
   const handleNext = () => {
     if (allCorrect) {
       progressService.completeLesson(module.id, lesson.id);
-      authService.addXP(50);
+      if (user) authService.addXP(user.id, 50);
     }
     const nextIdx = lessonIdx + 1;
     if (nextIdx < module.lessons.length) {
